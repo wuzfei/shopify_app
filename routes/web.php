@@ -35,6 +35,7 @@ use Shopify\Webhooks\Topics;
 
 Route::fallback(function (Request $request) {
     Log::error("Route::fallback", $request->all());
+    $session = $request->get('shopifySession');
     if (Context::$IS_EMBEDDED_APP &&  $request->query("embedded", false) === "1") {
         return "Is not an Embedded APP !";
     } else {
@@ -42,20 +43,26 @@ Route::fallback(function (Request $request) {
         if ($rUrl) {
             return redirect($rUrl);
         }
-        $session = $request->get('shopifySession');
-//        if (!$session) {
-//            return AuthRedirection::redirect($request);
-//        }
         $client = new Rest($session->getShop(), $session->getAccessToken());
-        $result = $client->get('products');
-        $products = $result->getDecodedBody();
+        //获取总数量
+        $result = $client->get('products/count');
+//        $total = $result->getDecodedBody()['count'] ?? 0;
+//        $products = [];
+//        if ($total > 0 ){
+            $result = $client->get('products');
+            $products = $result->getDecodedBody()["products"] ?? [];
+        //}
+//        $currPage = $request->get("page", 1);
+//        $products = new  Illuminate\Pagination\Paginator($products, 1, $currPage, []);
+//        $products->setPath("/?shop=".$request->get("shop"));
         return view("products", [
+            //"total"=>$total,
             "projectName"=>Config::get("app.name"),
             "url" => Config::get("app.url"),
-            "products" => $products ? $products['products'] : [],
+            "products" => $products,
         ]);
     }
-})->middleware(['shopify.installed', 'shopify.auth']);
+})->middleware(['shopify.mustShop', 'shopify.installed', "shopify.auth"]);
 
 Route::get('/api/auth', function (Request $request) {
     Log::info("/api/auth", $request->all());
@@ -159,6 +166,11 @@ Route::post('/api/webhooks', function (Request $request) {
     }
 });
 
-Route::get('/home', function (Request $request) {
-    return "home";
-})->middleware('shopify.auth');
+
+Route::any("/home", function(Request $request) {
+    return view("home", [
+        //"total"=>$total,
+        "projectName"=>Config::get("app.name"),
+        "url" => Config::get("app.url"),
+    ]);
+});

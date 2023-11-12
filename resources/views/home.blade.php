@@ -33,39 +33,17 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="header clearfix">
-                <nav>
-                    <ul class="nav nav-pills pull-right">
-                        <li role="presentation" class="active"><button id="printBtn" class="btn btn-primary" onclick="window.print()">打印</button></li>
-                    </ul>
-                </nav>
-                <h3>产品列表</h3>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover ">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>名称</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
-                        <th>更新时间</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($products as $product)
-                    <tr>
-                        <td>{{$product['id']}}</td>
-                        <td>{{$product['title']}}</td>
-                        <td>{{$product['status']}}</td>
-                        <td>{{$product['created_at']}}</td>
-                        <td>{{$product['updated_at']}}</td>
-                    </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="col-sm-6 col-sm-offset-3 col-md-8 col-md-offset-2 main">
+            <form class="form-inline" method="get" action="/api/auth">
+                <div class="form-group">
+                    <label class="sr-only" for="exampleInputAmount">输入店铺地址进行安装</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">店铺地址</div>
+                        <input type="text" class="form-control" name="shop" id="exampleInputAmount" placeholder="我的店铺地址">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">安装</button>
+            </form>
         </div>
     </div>
 </div>
@@ -75,12 +53,4 @@
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
 </body>
-<style type="text/css">
-    @media print {
-        /* 设置打印样式 */
-        #printBtn{
-            display: none;
-        }
-    }
-</style>
 </html>
